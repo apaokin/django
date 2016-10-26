@@ -1,5 +1,5 @@
 from django.db import models
-from django.core.validators import validate_comma_separated_integer_list 
+from django.contrib.auth.models import User 
 
 class Player(models.Model):
 	login = models.CharField(db_index=True,max_length=40)
@@ -29,7 +29,11 @@ class Player(models.Model):
 	)
 	position = models.IntegerField(choices=POS_CHOICE)
 	platform = models.CharField(max_length=4,choices=PL_CHOICE)
+	user = models.ForeignKey(User)
+	image=models.ImageField(blank=True)
 	
+	class Meta:
+		unique_together=("login","platform")
 			
 		
 
@@ -42,17 +46,19 @@ class Tournament(models.Model):
 	name = models.CharField(db_index=True,max_length=40)
 	first_place_rew=models.PositiveIntegerField(default=0)
 	second_place_rew=models.PositiveIntegerField(default=0)
+	straight_up=models.PositiveIntegerField(default=0)
+	straight_down=models.PositiveIntegerField(default=0)
 	third_place_rew=models.PositiveIntegerField(default=0)
 	stik_up=models.PositiveIntegerField(default=0)
 	stik_down=models.PositiveIntegerField(default=0)
 	max_match=models.PositiveIntegerField()
 	done=models.BooleanField(default=False)
-	player = models.ManyToManyField(Player, through='Player_item')
+	
 
 class Team(models.Model):
 	name = models.CharField(db_index=True,max_length=40)
 	Date_of_creation = models.DateField(auto_now=True)
-	cap = models.ForeignKey(Player,on_delete=models.PROTECT)
+	cap = models.OneToOneField(Player,on_delete=models.PROTECT)
 	tournam = models.ManyToManyField(Tournament, through='Table_item')
 		
 
@@ -65,51 +71,9 @@ class Table_item(models.Model):
 	goal_missed=models.PositiveIntegerField(default=0)
 	place=models.PositiveIntegerField(default=0)
 
-class Player_item(models.Model):
-	player = models.ForeignKey(Player)
-	tournament = models.ForeignKey(Tournament)
-	goals=models.PositiveIntegerField(default=0)
-	assists=models.PositiveIntegerField(default=0)
-	shots=models.PositiveIntegerField(default=0)
-	shots_on_target=models.PositiveIntegerField(default=0)
-	passes_try=models.PositiveIntegerField(default=0)
-	passes=models.PositiveIntegerField(default=0)
-	tackles=models.PositiveIntegerField(default=0)
-	tackles_won=models.PositiveIntegerField(default=0)
-	interceptions=models.PositiveIntegerField(default=0)
-	saves=models.PositiveIntegerField(default=0)
-	drib_try=models.PositiveIntegerField(default=0)
-	drib=models.PositiveIntegerField(default=0)
-	bend_try=models.PositiveIntegerField(default=0)
-	bend=models.PositiveIntegerField(default=0)
-	TTD=models.PositiveIntegerField(default=0)
-	TTD_suc=models.PositiveIntegerField(default=0)
-	own_goal=models.PositiveIntegerField(default=0)
-	yellow=models.PositiveIntegerField(default=0)
-	red=models.PositiveIntegerField(default=0)	
-	rating=models.CharField(validators=			[validate_comma_separated_integer_list],max_length=5,blank=True,db_index=True)
-	class Meta:
-		index_together=[
-			["goals","rating"],
-			["assists","rating"],
-			["shots","rating"],
-			["shots_on_target","rating"],
-			["passes_try","rating"],
-			["passes","rating"],
-			["tackles_won","rating"],
-			["interceptions","rating"],
-			["saves","rating"],
-			["drib_try","rating"],
-			["drib","rating"],
-			["bend_try","rating"],
-			["bend","rating"],
-			["TTD","rating"],
-			["TTD_suc","rating"],
-			["own_goal","rating"],
-			["yellow","rating"],
-			["red","rating"],
-			
-		]
+
+	
+		
 
 
 
@@ -118,7 +82,6 @@ class Match(models.Model):
 	first_team = models.ForeignKey(Team)
 	second_team = models.ForeignKey(Team,related_name='sec')
 	tourn = models.ForeignKey(Tournament)
-	players = models.ManyToManyField(Player, through='TTD_player')
 	date = models.DateTimeField(auto_now=True)
 	first_goals=models.PositiveIntegerField(default=0)
 	second_goals=models.PositiveIntegerField(default=0)
@@ -133,7 +96,7 @@ class Event(models.Model):
 	
 class Img(models.Model):
 	image=models.ImageField()
-	date = models.DateField(editable=False,auto_now=True)
+	date = models.DateTimeField(editable=False,auto_now=True)
 	match = models.ForeignKey(Match)
 	
 class TTD_player(models.Model):
@@ -174,6 +137,6 @@ class TTD_player(models.Model):
 	own_goal=models.PositiveIntegerField(default=0)
 	yellow=models.PositiveIntegerField(default=0)
 	red=models.PositiveIntegerField(default=0)	
-	rating=models.CommaSeparatedIntegerField(max_length=5)
-	rating=models.CharField(validators=[validate_comma_separated_integer_list],max_length=5,blank=True)
-
+	
+	rating_1=models.IntegerField()
+	rating_2=models.IntegerField()
