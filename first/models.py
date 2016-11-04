@@ -111,7 +111,7 @@ class Match(models.Model):
 class Event(models.Model):
 	
 	minute=models.PositiveIntegerField(default=0)
-	name=models.CharField(max_length=40)
+	name=models.CharField(max_length=200)
 	match = models.ForeignKey(Match)
 	
 class Img(models.Model):

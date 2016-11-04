@@ -15,9 +15,14 @@ class Command(BaseCommand):
 	def handle(self, *args, **options):
 		
 		l=Match.objects.all()
-		ob=l.get(id=2641)
+		l2=TTD_player.objects.all()
+		l3=Event.objects.all()
+		print(dir(Tournament))
+		ob=l.get(id=5681)
 		print(ob.check_goals())
 		#l.delete()
+		#l2.delete()
+		#l3.delete()
 
 
     

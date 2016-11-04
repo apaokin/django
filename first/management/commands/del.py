@@ -16,14 +16,19 @@ class Command(BaseCommand):
 		player=Player.objects.all()
 		te=Tournament.objects.all()
 		t=Team.objects.all()
-		matches=Match.objects.all()
-		ttd=TTD_player.objects.all()
+		
 		
 		user.delete()
 		player.delete()
 		te.delete()
 		t.delete()
-		ttd.delete()
-		matches.delete()
-	
+		l=Match.objects.all()
+		l2=TTD_player.objects.all()
+		l3=Event.objects.all()
+		l.delete()
+		l2.delete()
+		l3.delete()
+
+
+    
  
