@@ -3,20 +3,18 @@ from django.contrib.auth.models import User
 
 class Player(models.Model):
 	login = models.CharField(db_index=True,max_length=40)
-	first_name = models.CharField(max_length=40,blank=True)
-	last_name = models.CharField(max_length=40,blank=True)
 	date_of_reg = models.DateField(editable=False,auto_now=True)
 	PL_CHOICE = (
-    	('PS3', 'PlayStation 3'),
-    	('PS4', 'PlayStation 4'),
-    	('XB', 'Xbox 360'),
+    ('PS3', 'PlayStation 3'),
+    ('PS4', 'PlayStation 4'),
+    ('XB', 'Xbox 360'),
 	('PC', 'PC'),
 	('Real', 'Real'),
 	)
 	POS_CHOICE = (
-    	(0, 'Goalkeeper'),
-    	(1, 'Central base'),
-    	(2, 'Left base'),
+	(0, 'Goalkeeper'),
+    (1, 'Central base'),
+    (2, 'Left base'),
 	(3, 'Right base'),
 	(4, 'Defending midfielder'),
 	(5, 'Central midfielder'),
@@ -27,15 +25,19 @@ class Player(models.Model):
 	(10, 'Left forward'),
 	(11, 'Right forward'),
 	)
-	position = models.IntegerField(choices=POS_CHOICE)
+	position = models.IntegerField(choices=POS_CHOICE,blank=True,null=True)
 	platform = models.CharField(max_length=4,choices=PL_CHOICE)
 	user = models.ForeignKey(User)
-	image=models.ImageField(blank=True)
+	image=models.ImageField(blank=True,null=True)
+	team = models.ForeignKey('Team',on_delete=models.SET_NULL,null=True,blank=True)
+	t_adm=models.BooleanField(default=0)
+	def __str__(self):
+		return self.login 
 	
 	class Meta:
 		unique_together=("login","platform")
 			
-		
+
 
 
 
@@ -43,7 +45,15 @@ class Player(models.Model):
 
 
 class Tournament(models.Model):
-	name = models.CharField(db_index=True,max_length=40)
+	PL_CHOICE = (
+    ('PS3', 'PlayStation 3'),
+    ('PS4', 'PlayStation 4'),
+    ('XB', 'Xbox 360'),
+	('PC', 'PC'),
+	('Real', 'Real'),
+	)
+	platform = models.CharField(max_length=4,choices=PL_CHOICE)
+	name = models.CharField(unique=True,max_length=40)
 	first_place_rew=models.PositiveIntegerField(default=0)
 	second_place_rew=models.PositiveIntegerField(default=0)
 	straight_up=models.PositiveIntegerField(default=0)
@@ -51,25 +61,21 @@ class Tournament(models.Model):
 	third_place_rew=models.PositiveIntegerField(default=0)
 	stik_up=models.PositiveIntegerField(default=0)
 	stik_down=models.PositiveIntegerField(default=0)
-	max_match=models.PositiveIntegerField()
 	done=models.BooleanField(default=False)
 	
 
 class Team(models.Model):
 	name = models.CharField(db_index=True,max_length=40)
 	Date_of_creation = models.DateField(auto_now=True)
-	cap = models.OneToOneField(Player,on_delete=models.PROTECT)
-	tournam = models.ManyToManyField(Tournament, through='Table_item')
-		
+	tournam = models.ManyToManyField(Tournament)
+	group=models.PositiveIntegerField(default=0)
+	def __str__(self):
+		return self.name
 
-Player.team = models.ForeignKey(Team,on_delete=models.SET_NULL,null=True)	
-class Table_item(models.Model):
-	team = models.ForeignKey(Team)
-	tournament = models.ForeignKey(Tournament)
-	points=models.PositiveIntegerField(default=0)
-	goal_scored=models.PositiveIntegerField(default=0)
-	goal_missed=models.PositiveIntegerField(default=0)
-	place=models.PositiveIntegerField(default=0)
+
+	#	
+
+	
 
 
 	
@@ -87,7 +93,21 @@ class Match(models.Model):
 	second_goals=models.PositiveIntegerField(default=0)
 	tour=models.PositiveIntegerField(default=0)
 	done=models.BooleanField(default=False)
+	play_off=models.PositiveIntegerField(default=0)
 
+
+	def check_goals(self):
+		sum1=0
+		sum2=0
+		l=TTD_player.objects.filter(match_id=self.id)
+		for i in l:
+			if i.player.team_id==self.first_team_id:
+				sum1=sum1+i.goals
+			else:
+				sum2=sum2+i.goals
+
+		return( sum1==self.first_goals and sum2==self.second_goals)
+		
 class Event(models.Model):
 	
 	minute=models.PositiveIntegerField(default=0)
@@ -120,9 +140,9 @@ class TTD_player(models.Model):
 	TTD=models.PositiveIntegerField(default=0)
 	TTD_suc=models.PositiveIntegerField(default=0)
 	POS_CHOICE = (
-    	(0, 'Goalkeeper'),
-    	(1, 'Central base'),
-    	(2, 'Left base'),
+    (0, 'Goalkeeper'),
+    (1, 'Central base'),
+    (2, 'Left base'),
 	(3, 'Right base'),
 	(4, 'Defending midfielder'),
 	(5, 'Central midfielder'),
@@ -138,5 +158,5 @@ class TTD_player(models.Model):
 	yellow=models.PositiveIntegerField(default=0)
 	red=models.PositiveIntegerField(default=0)	
 	
-	rating_1=models.IntegerField()
-	rating_2=models.IntegerField()
+	rating_1=models.IntegerField(default=5)
+	rating_2=models.IntegerField(default=5)
