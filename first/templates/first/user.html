@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block content %}
+<h3> Информация о пользователе:</h3>
+    <ul>
+    <table>
+   <tr>
+   <td>ID пользователя: </td> <td> {{user.id}}</td>
+   </tr>
+   <tr>
+   <td>никнейм: </td> <td> {{user.username}}</td>
+   </tr>
+    <tr>
+   <td>Имя: </td> <td> {{user.first_name}}</td>
+   </tr>
+    <tr>
+   <td>Фамилия: </td> <td> {{user.second_name}}</td>
+   </tr>
+   
+   </table>
+
+<h4> Игровые аккаунты:</h4>
+   {% for player in players %}
+   		<table>
+		<tr>
+   			<td>ID игрока: </td> <td> {{player.id}}</td>
+   		</tr>
+   		<tr>
+   			<td>Логин: </td> <td> {{player.login}}</td>
+   		</tr>
+   		<tr>
+   			<td>Платформа: </td> <td> {{player.platform}}</td>
+   		</tr>
+   		<tr>
+   			<td>Позиция(если указана): </td> <td> {{player.get_position_display}}</td>
+   		</tr>
+   		<tr>
+   			<td>Команда(если есть): </td> <td> {{player.team}}</td>
+   		</tr>
+   		<tr>
+   			<td>Позиция(если указана): </td> <td> {{player.id}}</td>
+   		</tr>
+   		<tr>
+   			<td>Позиция(если указана): </td> <td> {{player.id}}</td>
+   		</tr>
+   		<tr>
+   			<td>Роль в команде: </td> <td> {%if player.t_adm%}
+   		админ
+   		{%else%}
+   		простолюдин
+   		{%endif%}</td>
+   		</tr>
+   		</table>
+   		
+   		<br>
+   		<br>
+	{% endfor %}   
+    </ul>
+
+{% endblock %}

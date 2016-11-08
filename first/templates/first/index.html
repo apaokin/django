@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block content %}
+{% if users %}
+    <ul>
+    {% for user in users %}
+        <li><a href="{%url 'user_detail' user.username%}">{{ user.username }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %} 
+    <p>No users here.</p>
+{% endif %}
+{% if prev >= 0 %} 
+<li><a href="{%url 'index' prev%}">назад</a></li>
+{% endif %}
+<li><a href="{%url 'index' from%}">Дальше</a></li>
+
+{% endblock %}

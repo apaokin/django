@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block content %}
+{% if player %}
+    <ul>
+   <br>ID игрока: &nbsp; &nbsp; &nbsp; &nbsp; {{player.id}}
+   <br>Ник игрока: &nbsp; &nbsp; &nbsp; &nbsp;{{player.login}}
+   
+    </ul>
+{% else %}
+    <p>Нет игрока с таким id</p>
+{% endif %}
+{% endblock %}

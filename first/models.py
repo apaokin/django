@@ -1,5 +1,24 @@
 from django.db import models
 from django.contrib.auth.models import User 
+from django.contrib.contenttypes.fields import GenericForeignKey,GenericRelation
+from django.contrib.contenttypes.models import ContentType
+
+class Tag(models.Model):
+	tag = models.SlugField()
+	content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+	object_id = models.PositiveIntegerField()
+	content_object = GenericForeignKey('content_type', 'object_id')
+
+	def __str__(self):             
+		return self.tag
+
+class Post(models.Model):
+    content=models.TextField()
+    title=models.CharField(max_length=50)
+    tags = GenericRelation(Tag)
+    date = models.DateField(editable=False,auto_now=True)
+    author = models.ForeignKey(User)
+
 
 class Player(models.Model):
 	login = models.CharField(db_index=True,max_length=40)
@@ -24,8 +43,9 @@ class Player(models.Model):
 	(9, 'Striker'),
 	(10, 'Left forward'),
 	(11, 'Right forward'),
+	(12, 'Нет'),
 	)
-	position = models.IntegerField(choices=POS_CHOICE,blank=True,null=True)
+	position = models.IntegerField(choices=POS_CHOICE,blank=True,default=12)
 	platform = models.CharField(max_length=4,choices=PL_CHOICE)
 	user = models.ForeignKey(User)
 	image=models.ImageField(blank=True,null=True)

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang='ru'>
+<head>
+<p align="right">	{% if request.user.is_authenticated%}
+		<a href="{%url 'user_detail' request.user.username%}">Ваш профиль</a>
+		<a href="{%url 'logout' %}">Выход</a>
+	{%else%}
+	зарегистрируйтесь или <a href="{%url 'login'%}">войдите</a>
+	{% endif %}</p>
+
+    <title>{% block title %}{% endblock %}</title>
+	
+</head>
+<body>
+	<h1> </h1>
+   
+    {% block content %}
+    <hr>
+    <p>Thanks for visiting my site.</p>
+    {% endblock %}
+</body>
+</html>
