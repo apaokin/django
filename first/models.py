@@ -4,21 +4,23 @@ from django.contrib.contenttypes.fields import GenericForeignKey,GenericRelation
 from django.contrib.contenttypes.models import ContentType
 
 class Tag(models.Model):
-	tag = models.SlugField()
+	name = models.SlugField(unique=True)
+	def __str__(self):             
+		return self.name
+	
+class Post(models.Model):
+	content=models.TextField()
+	title=models.CharField(max_length=50)
+	date = models.DateField(editable=False,auto_now=True)
+	author = models.ForeignKey(User)
+	tag = models.ManyToManyField(Tag)
+class Text_req(models.Model):
+	content=models.TextField()
+	title=models.CharField(max_length=50)
 	content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
 	object_id = models.PositiveIntegerField()
+	from_id = models.PositiveIntegerField()
 	content_object = GenericForeignKey('content_type', 'object_id')
-
-	def __str__(self):             
-		return self.tag
-
-class Post(models.Model):
-    content=models.TextField()
-    title=models.CharField(max_length=50)
-    tags = GenericRelation(Tag)
-    date = models.DateField(editable=False,auto_now=True)
-    author = models.ForeignKey(User)
-
 
 class Player(models.Model):
 	login = models.CharField(db_index=True,max_length=40)
@@ -91,6 +93,7 @@ class Team(models.Model):
 	group=models.PositiveIntegerField(default=0)
 	def __str__(self):
 		return self.name
+	
 
 
 	#	

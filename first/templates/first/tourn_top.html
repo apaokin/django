@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block content %}
+
+<table>
+<tr>
+   			<td>Место </td> <td> Игок</td> <td> Команда</td> <td> </td>
+</tr>
+
+
+<td> </td> 
+{% for item2 in players_ttd %}
+
+	<tr>
+	
+	{% for i in item2 %}			
+   			<td>{{i}} </td> 
+{% endfor %} 
+	</tr>  		
+{% endfor %}
+</table>
+{% endblock %}

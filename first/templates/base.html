@@ -1,19 +1,28 @@
 <!DOCTYPE html>
+
 <html lang='ru'>
 <head>
-<p align="right">	{% if request.user.is_authenticated%}
+
+	
+    <title>{% block title %}{% endblock %}</title>
+	
+</head>
+<body>
+	
+	<p align="right">	{% if request.user.is_authenticated%}
 		<a href="{%url 'user_detail' request.user.username%}">Ваш профиль</a>
 		<a href="{%url 'logout' %}">Выход</a>
 	{%else%}
 	зарегистрируйтесь или <a href="{%url 'login'%}">войдите</a>
 	{% endif %}</p>
+	<h1> </h1>`
+   	<li><a href="{%url 'user_index' 0%}">пользователи</a></li>
+	<li><a href="{%url 'player_index' 0%}">игроки</a></li>
+	<li><a href="{%url 'teams_index' 0%}">команды</a></li>
+	<li><a href="{%url 'tourn_index' 0%}">турниры</a></li>
+	<li><a href="{%url 'tourn_json' %}">Турниры json</a></li>
+	<li><a href="{%url 'start' %}">посты</a></li>
 
-    <title>{% block title %}{% endblock %}</title>
-	
-</head>
-<body>
-	<h1> </h1>
-   
     {% block content %}
     <hr>
     <p>Thanks for visiting my site.</p>

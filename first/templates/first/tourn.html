@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block content %}
+<table>
+<tr>
+   			<td>ID турнира: </td> <td> {{item.id}}</td>
+   		</tr>
+   		<tr>
+   			<td>Название: </td> <td> {{item.name}}</td>
+   		</tr>
+   		<tr>
+   			<td>Первое место получает: </td> <td> {{item.first_place_rew}}</td>
+   		</tr>
+   		<tr>
+   			<td>Второе место получает: </td> <td> {{item.second_place_rew}}</td>
+   		</tr>
+   		<tr>
+   			<td>Третье место получает: </td> <td> {{item.third_place_rew}}</td>
+   		</tr>
+   		<tr>
+   			<td>Повышение напрямую: </td> <td> {{item.straight_up}}</td>
+   		</tr>
+   		<tr>
+   			<td>Участвуют в стыках за повышение: </td> <td> {{item.stik_up}}</td>
+   		</tr>
+   		<tr>
+   			<td>Вылетают напрямую </td> <td> {{item.straight_down}}</td>
+   		</tr>
+   		<tr>
+   			<td>Участвуют в стыках(понижение): </td> <td> {{item.stik_down}}</td>
+   		</tr>
+</table>
+<table>
+<tr>
+   			<td>Место </td> <td> Очки</td> <td> Голов забито</td> <td> Голов пропущено</td>
+</tr>
+
+
+<td> </td> 
+{% for table_item in table %}
+
+	<tr>
+	
+	{% for i in table_item %}			
+   			<td>{{i}} </td> 
+{% endfor %} 
+	</tr>  		
+{% endfor %}
+</table>
+{% endblock %}

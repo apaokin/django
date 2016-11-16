@@ -3,8 +3,8 @@
 {% block content %}
 {% if player %}
     <ul>
-   <br>ID игрока: &nbsp; &nbsp; &nbsp; &nbsp; {{player.id}}
-   <br>Ник игрока: &nbsp; &nbsp; &nbsp; &nbsp;{{player.login}}
+    <h4> User: {{player.user}}</h4>
+   {% include "player_prop.html" %}
    
     </ul>
 {% else %}

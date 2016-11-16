@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block content %}
+   <br>
+   <br>
+   <li><a href="{%url 'post_create' %}">создать пост</a></li>
+		{% for post in posts   %} 
+		<table>
+      <tr>
+            <td>Автор: </td> <td> {{post.author}}</td>
+         </tr>
+		<tr>
+   			<td>Заголовок: </td> <td> {{post.title}}</td>
+   		</tr>
+   		<tr>
+   			<td>Содержимое: </td> <td> {{post.content}}</td>
+   		</tr>
+   		<tr>
+   			<td>Дата: </td> <td> {{post.date}}</td>
+   		</tr>
+   		<tr>
+   			<td>Теги :{% for item in post.tag.all   %} 
+   				<a href="{%url 'start_tag' num=item.name%}">{{item}}</a>
+   				{%endfor%}
+   			</td> 
+   		</tr>
+         <tr>
+            <td><a href="{%url 'post_create' post.id %}">редактировать пост</a> </td> 
+         </tr>   
+
+   		</table>
+   		<br>
+   		<br>
+         {%endfor%}
+   		
+
+   		 		
+   		
+{% endblock %}

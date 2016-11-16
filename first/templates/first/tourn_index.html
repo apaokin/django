@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block content %}
+
+    <ul>
+    {% for item in items %}
+        <li><a href="{%url 'tourn_detail' item.id%}">{{ item.name }}</a></li>
+    {% endfor %}
+    </ul>
+
+   
+
+{% if prev >= 0 %} 
+<li><a href="{%url 'tourn_index' prev%}">назад</a></li>
+{% endif %}
+<li><a href="{%url 'tourn_index' from%}">Дальше</a></li>
+
+{% endblock %}

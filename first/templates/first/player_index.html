@@ -1,0 +1,18 @@
+
+{% extends "base.html" %}
+{% block content %}
+{% if players %}
+    <ul>
+    {% for player in players %}
+        <li><a href="{%url 'player_detail' player.id%}">{{ player.login }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %} 
+    <p>No players here.</p>
+{% endif %}
+{% if prev >= 0 %} 
+<li><a href="{%url 'player_index' prev%}">назад</a></li>
+{% endif %}
+<li><a href="{%url 'player_index' from%}">Дальше</a></li>
+
+{% endblock %}

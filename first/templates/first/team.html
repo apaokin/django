@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block content %}
+
+    <ul>
+   <h3> Информация о команде:</h3>
+    <ul>
+    <table>
+   <tr>
+   <td>ID команды: </td> <td> {{team.id}}</td>
+   </tr>
+   <tr>
+   <td>название: </td> <td> {{team.name}}</td>
+   </tr>
+    <tr>
+   <td>Дата создания: </td> <td> {{team.Date_of_creation}}</td>
+   </tr>
+   </table>
+   <h4> Игроки:</h4>
+   {% for player in players %}
+   	{% include "player_short_prop.html"%}
+	{% endfor %}   
+    </ul>
+   
+   </table>
+   
+   
+    </ul>
+
+{% endblock %}
