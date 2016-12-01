@@ -2,6 +2,14 @@
 {% extends "base.html" %}
 {% block content %}
 
+<a href="{%url 'tour_create' %}"><button  class: "btn btn-default btn-sm">новый турнир</button></a>
+
+<form  method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Submit" />
+</form>
+
     <ul>
     {% for item in items %}
         <li><a href="{%url 'tourn_detail' item.id%}">{{ item.name }}</a></li>

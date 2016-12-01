@@ -1,0 +1,24 @@
+{% load static %}
+<script  src="{% static "/js/jquery.js" %}">
+			  </script>
+<script  src="{% static "/js/bootstrap.min.js" %}">
+			  </script>
+<link href="style.css" rel="{% static "/css/bootstrap.css" %}">
+<link href="style.css" rel="{% static "/css/bootstrap-theme.css" %}">
+
+
+<div class="flex-container">
+  		<div class="flex-sub-container">
+  		<a href="{%url 'start' %}">Посты</a>
+  		<a href="{%url 'user_index' 0%}">Пользователи</a>
+
+  		</div>
+  		
+  		<div class="flex-sub-container">
+  			<a href="{%url 'player_index' 0%}">Игроки</a>
+			<a href="{%url 'teams_index' 0%}">Команды</a>
+			<a href="{%url 'tourn_index' 0%}">Турниры</a>
+			<a href="{%url 'tourn_json' %}">Турниры json</a>
+  		</div>
+  		
+	</div>	w

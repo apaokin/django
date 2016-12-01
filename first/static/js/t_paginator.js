@@ -1,12 +1,34 @@
-	alert("ZZZ")
+function getj(arg)
+{	
+	if (arg<0) arg=0;
+	var s='http://127.0.0.1:8000/tournaments_json+from'+arg + '/';
 	$.ajax({
-2	
-	  url: 'response.php?action=sample1',
-3
+
+	  url: s ,
+	  dataType : "json", 
 	  success: function(data) {
-4
-	    $('.results').html(data);
-5
+	  	var my_out="<h3 align='center'>Турниры</h3><br><table cellspacing='10' width='30%'><tr><th>Id</th><th>Название</th><th>Платформа</th>"
+
+	  	for ( i in data)
+	  	{
+	  		st=data[i]
+	  		
+	  		my_out+="<tr>"
+	  		for ( j in st)
+	  		{
+	  			my_out+="<td height='10'>"+st[j]+"</td>"
+	  		}
+
+	  		my_out+="</tr>"
+	  	}
+	  	my_out+="</table>"
+	    $("div.scr").html(my_out)
+	    
 	  }
-6
+
 	});
+
+cur=arg;
+}
+var cur=0;
+getj(cur);

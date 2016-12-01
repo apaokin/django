@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 {% extends "base.html" %}
 {% block content %}
+<a href="{%url 'tour_edit' item.id %}"><button  class: "btn btn-default btn-sm">редактировать турнир</button></a>
+
+
+<br>
 <table>
 <tr>
    			<td>ID турнира: </td> <td> {{item.id}}</td>

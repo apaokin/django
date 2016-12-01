@@ -3,14 +3,20 @@
 {% block content %}
    <br>
    <br>
-   <li><a href="{%url 'post_create' %}">создать пост</a></li>
+   <div>
+   <a href="{%url 'post_create' %}"><button  class: "btn btn-default btn-sm">новый пост</button></a>
+   </div>
+   <div class="flex-container">
 		{% for post in posts   %} 
-		<table>
+      <div class="flex-item">
+		<table border="1" >
       <tr>
             <td>Автор: </td> <td> {{post.author}}</td>
+
          </tr>
 		<tr>
    			<td>Заголовок: </td> <td> {{post.title}}</td>
+            
    		</tr>
    		<tr>
    			<td>Содержимое: </td> <td> {{post.content}}</td>
@@ -19,19 +25,37 @@
    			<td>Дата: </td> <td> {{post.date}}</td>
    		</tr>
    		<tr>
-   			<td>Теги :{% for item in post.tag.all   %} 
+            <td>Теги</td> 
+   			<td>{% for item in post.tag.all   %} 
    				<a href="{%url 'start_tag' num=item.name%}">{{item}}</a>
    				{%endfor%}
    			</td> 
    		</tr>
+         <tr>  <td> <br>   </td> </tr>
+         
          <tr>
-            <td><a href="{%url 'post_create' post.id %}">редактировать пост</a> </td> 
-         </tr>   
-
+         <td>{%if  post.author == request.user or request.user.is_staff%} <a href="{%url 'post_create' post.id %}"><button  class: "btn btn-default btn-sm">редактировать</button></a> <div class="btn-group pull-right">
+                      
+                        <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                           <span class="caret">
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                           <li><form action = "{%url 'post_delete' post.id %}" method = "post">
+                           {% csrf_token %}
+                           <input type="submit" name="upvote" value="удалить" />
+                           </form></li>
+                          
+                        </ul> 
+            </div>
+            {%endif%}
+            </td>
+         </tr>
    		</table>
    		<br>
    		<br>
+         </div>
          {%endfor%}
+   </div>
    		
 
    		 		

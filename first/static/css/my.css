@@ -1,0 +1,23 @@
+.head-block,.top-menu,.top-material,.left-sidebar,.content{
+    background:#ccc;
+    margin-bottom:1px;
+}
+.head-block{
+    height:250px;
+    width: 100%;
+    background-size:cover; 
+    background:url(http://127.0.0.1:8000/static/img/shapka.jpg)top center no-repeat; 
+} 
+
+.top-menu{
+    background:#daf2fe;
+}
+.top-menu ul{
+    padding-left:0;
+    margin-bottom:0;
+}
+.top-menu li{
+    display:inline-block;
+    margin-left:10px;
+    padding:3px 10px;
+}

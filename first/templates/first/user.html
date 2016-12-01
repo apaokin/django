@@ -1,7 +1,9 @@
 
 {% extends "base.html" %}
 {% block content %}
-<h3> Информация о пользователе:</h3>
+<div class="flex-container">
+<div class="flex-item">
+<h4> Информация о пользователе:</h4>
     <ul>
     <table>
    <tr>
@@ -18,11 +20,14 @@
    </tr>
    
    </table>
-
-<h4> Игровые аккаунты:</h4>
-   {% for player in players %}
-   	{% include "player_prop.html"%}
-	{% endfor %}   
-    </ul>
+</div>
+  <div class="flex-item">
+  <h4> Игровые аккаунты:</h4>
+     {% for player in players %}
+   	  {% include "player_prop.html"%}
+	 {% endfor %}   
+     </ul>
+  </div>
+</div>
 
 {% endblock %}

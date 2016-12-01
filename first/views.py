@@ -2,11 +2,21 @@ from django.http import HttpResponse
 from django.template import loader
 from django.shortcuts import render
 from django.urls import *
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,JsonResponse
 from .models import *
 from .forms import *
 import json
+from django.views.decorators.http import *
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.views.generic.edit import *
+from django.contrib.auth import logout
+from cent import Client
 
+
+
+def logout_view(request):
+    logout(request)
+    return HttpResponseRedirect("/")
 
 def user_index(request,from1):
 	fr=int(from1)
@@ -59,15 +69,22 @@ def teams_index(request,from1):
 	return render(request,'first/teams_index.html',context)
 
 def tourn_index(request,from1):
+	form=TourFormIndex()
+	cat=request.POST.get('z')
+
 	fr=int(from1)
 	from2=fr+50;
-	items=Tournament.objects.all()[fr:from2]
+	if not cat:
+		items=Tournament.objects.all()[fr:from2]
+	else:
+		items=Tournament.objects.filter(platform=cat)[fr:from2]
 	
 	
 	context = {
 		'prev' : fr-50,
         'items': items,
         'from': from2,
+        'form': form,
          
     }
 
@@ -75,6 +92,17 @@ def tourn_index(request,from1):
 	return render(request,'first/tourn_index.html',context)
 
 def tourn_index_json(request,from1):
+	fr=int(from1)
+	from2=fr+10;
+	items=Tournament.objects.all()[fr:from2]
+	it=[]
+	for item in items:
+		it.append((item.id,item.name,item.platform))
+	
+	return HttpResponse(json.dumps(it), content_type='text/json')
+
+
+def t(request,from1):
 	fr=int(from1)
 	from2=fr+10;
 	items=Tournament.objects.all()[fr:from2]
@@ -149,6 +177,63 @@ def tourn_ttd(request,num):
     }
 	
 	return render(request,'first/tourn_top.html',context)
+
+
+class TourCreate(CreateView):
+    model = Tournament
+    template_name_suffix='_create'
+    fields = ['platform', 'name', 'first_place_rew', 'second_place_rew', 'third_place_rew']
+
+class TourEdit(UpdateView):
+    model = Tournament
+    template_name_suffix='_edit'
+
+    fields = ['platform', 'name', 'first_place_rew', 'second_place_rew', 'third_place_rew']
+    def get_object(self, queryset=None):
+    	self.my_id=self.kwargs['id']
+    	obj = Tournament.objects.get(id=int(self.kwargs['id']))
+    	return obj
+    
+def handle_ajax_tour(request):
+	if request.method == 'POST':
+		
+		errors=[]
+		my_id=request.POST.get('my_id')
+		if my_id:
+			form=TourForm(request.POST,instance=Tournament.objects.get(id=int(my_id)))
+		else:
+			form= TourForm(request.POST);
+
+		if form.is_valid():
+			form.save()
+			if my_id:
+				errors="Турнир успешно отредактирован"
+			else:
+				errors="Турнир успешно создан"
+
+		else:
+			#post_text = json.dumps([(k, [e for e in v]) for k, v in form.errors.items()])
+		
+			
+			l=[]
+			for k,v in form.errors.items():
+				l=[]
+				l.append(k);
+				for e in v:
+					l.append(e);
+				errors.append(l);
+
+			#print(errors)
+
+			
+		return HttpResponse(
+            json.dumps(errors),
+            content_type="application/json")
+        
+	
+
+
+
 def post_change(request,*args):
 	if args: 
 		post=Post.objects.filter(id=args[0]).first()
@@ -160,6 +245,7 @@ def post_change(request,*args):
 		to=reverse(post_change)
 
 	if request.method=='POST':
+		print(request.POST)
 		
 		form = PostForm(request.POST,instance=post)
 		if form.is_valid():
@@ -168,6 +254,8 @@ def post_change(request,*args):
 			post_tags = form.cleaned_data['post_tags']
 			tags_set=post_tags.split(';')
 			post.author=request.user
+			if args:
+				post.tag.clear()
 			post.save()
 			for item in tags_set:
 				if item:
@@ -190,6 +278,15 @@ def post_change(request,*args):
     }
 	
 	return render(request,'first/post_form.html',context)
+@require_POST
+def post_delete(request,*args):
+	post=Post.objects.get(id=args[0])
+	if not( post.author== request.user or request.user.is_staff):
+		return render(request,'auth_error.html')
+	#post.delete()
+	return render(request,'success.html')
+
+
 def func_for_sort(i):
 	l=(i[1],i[2],i[3])
 	return l	
@@ -266,10 +363,10 @@ def start(request,num=None):
 	
 	if num is not None:
 		tag=Tag.objects.get(name=num)
-		posts=tag.post_set.all().prefetch_related('tag')
+		posts=tag.post_set.prefetch_related('tag')
 	else:
-		posts=Post.objects.all().prefetch_related('tag')
-	
+		posts=Post.objects.prefetch_related('tag')
+	posts=posts.select_related('author')	
 		
 	
 	#template = loader.get_template('first/success.html')
@@ -279,3 +376,83 @@ def start(request,num=None):
         
     }
 	return render(request,'first/start.html',context)
+
+def handle_ajax_like(request,num=None):
+	if request.method=="GET":
+
+		likes=[]
+		for item in Like.objects.filter(bel=request.user.id):
+				likes.append(item.object_id)
+		return HttpResponse(
+    json.dumps(likes),
+            content_type="application/json")	
+	else:
+		
+
+		url = "http://localhost:7000/"
+		secret_key = "secret"
+
+# initialize client instance.
+		client = Client(url, secret_key, timeout=1)
+
+# publish data into channel
+		channel = "like-updates"
+		data = {"input": "test"}
+		client.publish(channel, data)
+		post_id=request.POST.get('post_id');
+		like=Like.objects.filter(object_id=post_id,bel=request.user.id).first()
+		if like:
+			like.delete()
+			return HttpResponse(
+    json.dumps("delete"),
+            content_type="application/json")
+		else:
+			like=Like(content_object=Post.objects.get(id=post_id),bel=request.user)
+			like.save()
+			return HttpResponse(
+    json.dumps("create"),
+            content_type="application/json")
+
+
+def start_pag(request,num=None):
+		
+
+
+	if num is not None:
+		tag=Tag.objects.get(name=num)
+		posts=tag.post_set.prefetch_related('tag')
+	else:
+		posts=Post.objects.prefetch_related('tag')
+	posts=posts.prefetch_related('likes')
+	posts=posts.select_related('author')	
+	
+	
+	if request.is_ajax():
+		likes=[]
+		for post in posts:
+			likes.append((post.id,post.likes.count()))
+		return HttpResponse(
+            json.dumps(likes),
+            content_type="application/json")	
+	
+	#template = loader.get_template('first/success.html')
+	
+	paginator = Paginator(posts, 5) # Show 25 contacts per page
+
+	page = request.GET.get('page')
+	try:
+		items = paginator.page(page)
+	except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+		items = paginator.page(1)
+	except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+		items = paginator.page(paginator.num_pages)
+
+	context = {
+         
+        'items': items,
+        
+    }
+	
+	return render(request,'first/start_tag.html',context)

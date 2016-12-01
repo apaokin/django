@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User 
 from django.contrib.contenttypes.fields import GenericForeignKey,GenericRelation
 from django.contrib.contenttypes.models import ContentType
+from django.core.urlresolvers import reverse
+from django.http import HttpResponse
 
 class Tag(models.Model):
 	name = models.SlugField(unique=True)
@@ -14,6 +16,15 @@ class Post(models.Model):
 	date = models.DateField(editable=False,auto_now=True)
 	author = models.ForeignKey(User)
 	tag = models.ManyToManyField(Tag)
+	likes = GenericRelation('Like')
+	
+class Like(models.Model):
+
+	content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+	object_id = models.PositiveIntegerField()
+	content_object = GenericForeignKey('content_type', 'object_id')
+	bel=models.ForeignKey(User)
+
 class Text_req(models.Model):
 	content=models.TextField()
 	title=models.CharField(max_length=50)
@@ -84,7 +95,9 @@ class Tournament(models.Model):
 	stik_up=models.PositiveIntegerField(default=0)
 	stik_down=models.PositiveIntegerField(default=0)
 	done=models.BooleanField(default=False)
-	
+	def get_absolute_url(self):
+		return reverse('tourn_detail', args=[self.id])
+		#return HttpResponse('OK')
 
 class Team(models.Model):
 	name = models.CharField(db_index=True,max_length=40)

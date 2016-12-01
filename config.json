@@ -1,0 +1,27 @@
+{
+  "secret": "80a50ccb-5585-4753-b478-f51939ddef3d",
+	"connection_lifetime": 0,
+    "anonymous": true,
+    "publish": true,
+    "watch": true,
+    "presence": true,
+    "join_leave": true,
+    "history_size": 10,
+    "history_lifetime": 30,
+    "namespaces": [
+        {
+          "name": "public",
+          "publish": true,
+          "presence": true,
+          "join_leave": true,
+          "anonymous": true,
+          "history_size": 10,
+          "history_lifetime": 30,
+          "recover": true
+        },
+        {
+          "name": "gossips",
+          "watch": true
+        }
+    ]
+}

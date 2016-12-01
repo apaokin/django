@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block content %}
+{% csrf_token %}
+   <br>
+   <br>
+   <div>
+   <a href="{%url 'post_create' %}"><button  class: "btn btn-default btn-sm">новый пост</button></a>
+   </div>
+   <div>
+        {% for post in items   %} 
+      <div class>
+        <table >
+      <tr>
+            <td>Автор: </td> <td> {{post.author}}</td>
+
+         </tr>
+        <tr>
+            <td>Заголовок: </td> <td> {{post.title}}</td>
+            
+        </tr>
+        <tr>
+            <td>Содержимое: </td> <td> {{post.content}}</td>
+        </tr>
+        <tr>
+            <td>Дата: </td> <td> {{post.date}}</td>
+        </tr>
+        <tr>
+            <td>Теги</td> 
+            <td>{% for item in post.tag.all   %} 
+                <a href="{%url 'start_tag' num=item.name%}">{{item}}</a>
+                {%endfor%}
+            </td> 
+        </tr>
+        <tr>
+            <td>Лайки: </td> <td id="count-{{post.id}}"> </td>
+        </tr>
+        <tr>
+         <td class="cl" id="like-{{post.id}}" onclick="get_like({{post.id}})"> ЛАЙКНИ МЕНЯ </td>
+         </tr>
+         <tr>  <td> <br>   </td> </tr>
+         
+         <tr>
+         <td>{%if  post.author == request.user or request.user.is_staff%} <a href="{%url 'post_create' post.id %}"><button  class: "btn btn-default btn-sm">редактировать</button></a> <div class="btn-group pull-right">
+                      
+                        <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                           <span class="caret">
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                           <li><form action = "{%url 'post_delete' post.id %}" method = "post">
+                           {% csrf_token %}
+                           <input type="submit" name="upvote" value="удалить" />
+                           </form></li>
+                          
+                        </ul> 
+            </div>
+            {%endif%}
+            </td>
+         </tr>
+        </table>
+        <br>
+        <br>
+         </div>
+         {%endfor%}
+   </div>
+        
+
+                
+        
+
+
+<div class="pagination">
+    <span class="step-links">
+        {% if items.has_previous %}
+            <a href="?page={{ items.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ items.number }} of {{ items.paginator.num_pages }}.
+        </span>
+
+        {% if items.has_next %}
+            <a href="?page={{ items.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
+{% load static %}
+<script src="//cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js" type="text/javascript"></script>
+ <script src="//cdn.jsdelivr.net/sockjs/1.0/sockjs.min.js"></script>
+<script  src="{% static "/js/centrifuge.js" %}">
+        </script>
+<script  src="{% static "/js/like_post.js" %}">
+        </script>
+
+{% endblock %}

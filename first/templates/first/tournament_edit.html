@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block title %}
+
+{% endblock %}
+
+{% block content %}
+<h3> Редактирование турнира </h3>
+<br>
+<form   method="post" id="post-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+	
+    <input name="dd" id="tour_id" value="{{view.my_id}}" type="hidden" />
+    <input type="submit" id="sid"  value="submit" />
+</form>
+<br>
+<br>
+<br>
+
+<div class="scr" id="err">
+
+
+</div>
+{% load static %}
+<script  src="{% static "/js/form.js" %}">
+			  </script>
+{% endblock %}

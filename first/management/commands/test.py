@@ -14,22 +14,17 @@ class Command(BaseCommand):
 	output_transaction= True
    
 	def handle(self, *args, **options):
-		team=Team.objects.all().first()
-		l=Match.objects.filter(first_team=team)
-		ex_post=Post.objects.filter(id=18).first()
-		form = PostForm(instance=ex_post)
-		form2 = PostForm(instance=Post("dd","dd"))
-		z=form2.save(commit=False)
-		print()
-		tournam=Tournament.objects.all()
+		team=Team.objects.first()
+		p=Post.objects.all()
+		user=User.objects.first()
+		for post in p:
+			t=Like(content_object=post,bel=user)
+			t.save()
+
 		#print(dir(Player))
 		#print(dir(User))
-		counter=0
-		t=Tag.objects.all()
-		for item in tournam:
-			counter=counter+1
 		
-		print(counter)
+		
 		
 		
 
